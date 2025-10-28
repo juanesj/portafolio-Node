@@ -12,14 +12,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "src")));
 
-// Ruta principal
+// Endpoint de salud para Render
 app.get("/healthz", (req, res) => {
-  res
-    .status(200)
-    .json({
-      status: "ok",
-      message: "Servidor activo y funcionando correctamente 🚀",
-    });
+  res.status(200).json({
+    status: "ok",
+    message: "Servidor activo y funcionando correctamente 🚀",
+  });
+});
+
+// Ruta principal
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "src", "index.html"));
 });
 
 // Envío de correo
@@ -44,15 +47,15 @@ app.post("/send-email", (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.error("Error al enviar el correo:", error);
-      return res
-        .status(500)
-        .send("Error al enviar el correo: " + error.message);
+      return res.status(500).send("Error al enviar el correo: " + error.message);
     }
+
     console.log("Correo enviado correctamente:", info.response);
     res.redirect("/");
   });
 });
 
+// Servidor
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor ejecutándose en el puerto ${PORT}`);
 });
